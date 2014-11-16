@@ -1,0 +1,286 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>relativePosition - Content</title>
+	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="relativePosition.js"></script>
+	<script>
+		$(document).ready(function(){
+			var Content = $('.content p, .content :header, .content li');
+			var Box = $('#testbox');
+			var BackToTop = $('#back-to-top');
+			
+			$(window).on( 'scroll resize', function(){
+				//
+				var boxPosition = Box.fullOffset();
+				
+				// Content
+				Content.each(function(){
+					var Element = $(this);
+					var position = Element.relativePosition( boxPosition );
+					
+					Element.removeClass( 'above below' );
+					if( position.vertical < 0 ) {
+						Element.addClass( 'above' );
+					} else if( position.vertical > 0 ) {
+						Element.addClass( 'below' );
+					}
+				});
+				
+				// Back to top
+				var position = $('h1').relativePosition( boxPosition );
+				if( position.vertical < 0 ) {
+					BackToTop.addClass( 'scrolled' );
+				} else {
+					BackToTop.removeClass( 'scrolled' );
+				}
+				
+			}).trigger( 'scroll' );
+			
+		});
+	</script>
+    <style>
+		/* Layout */
+		body {
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			font-size: 14px;
+			line-height: 1.5;
+			color: #333;
+			background: #FFF;
+			margin: 0;
+		}
+		.wrapper {
+			overflow: hidden;
+			width: 960px;
+			margin: 0 auto;
+		}
+		.content {
+			width: 680px;
+			float: right;
+			padding: 150px 0;
+		}
+		.sidebar {
+			width: 240px;
+			float: left;
+			position: fixed;
+			height: 100%;
+			overflow: auto;
+		}
+		#testbox {
+			position: fixed;
+			left:     0;
+			top:      150px;
+			bottom:   150px;
+			width:    100%;
+			background: #EEE;
+			opacity:  .5;
+			z-index:  -1;
+		}
+		
+		/* Tags */
+		h1 {
+			font-size: 32px;
+		}
+		h2 {
+			font-size: 22px;
+		}
+		h3, h4, h5, h6 {
+			font-size: 15px;
+		}
+		a {
+			color: #39C;
+			text-decoration: none;
+		}
+		a[target="_blank"] {
+			font-weight: bold;
+			text-decoration: underline;
+		}
+		em {
+			background: #EEE;
+		}
+		
+		/* Menu */
+		.menu,
+		.menu ul {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+		.menu {
+			font-size: .9em;
+		}
+		.menu li {
+			border-top: 1px solid #EEE;
+		}
+		.menu > li:first-child {
+			border: none;
+		}
+		.menu ul {
+			margin-left: 2em;
+		}
+		.menu a {
+			font-weight: normal;
+			text-decoration: none;
+			display: block;
+			padding: 8px 0;
+		}
+		.menu .tab {
+			margin-left: 2em;
+		}
+		
+		/* Animations */
+		.content * {
+			transition: all .5s;
+		}
+		.content .above {
+			transform: translate( -100px );
+			opacity: 0;
+		}
+		.content .below {
+			transform: translate( 100px );
+			opacity: 0;
+		}
+		
+		/* Back to top */
+		#back-to-top a {
+			display: block;
+			font-size: .9em;
+			color: white;
+			background: #39c;
+			opacity: 0;
+			margin: 5px 0;
+			padding: 5px 0;
+			transition: all 1s;
+			text-align: center;
+		}
+		#back-to-top.scrolled a {
+			opacity: 1;
+		}
+	</style>
+</head>
+<body>
+
+<div id="testbox"></div>
+
+
+<div class="wrapper" id="top">
+	<div class="content">
+		
+		<h1>User Guide</h1>
+		
+		<h2>Section 1</h2>
+		<ul>
+			<li>Fusce sed dui at libero <a href="#">facilisis consequat</a> eget eu lectus.</li>
+			<li>Duis pharetra blandit dolor ut pellentesque. Fusce a bibendum ante, sit amet varius magna.</li>
+			<li>Suspendisse et tellus finibus turpis scelerisque porta in nec est. Nunc mollis odio a nunc eleifend
+				<ul>
+					<li><strong>Donec rhoncus ac</strong> elit vitae accumsan. Sed et massa accumsan, congue magna vitae.</li>
+					<li><strong>Praesent pretium</strong> quam sit amet orci porttitor posuere. <em>(Quisque pellentesque diam vitae)</em> velit tincidunt, at condimentum diam ornare</li>
+				</ul>
+			</li>
+		</ul>
+		
+		<h2>Section 2</h2>
+		<p>Cras posuere eros a pretium malesuada. Morbi suscipit ac elit sed vehicula. Quisque id eleifend enim. Phasellus accumsan posuere blandit.</p>
+		
+		<h3>Subsection 1</h3>
+		<ol>
+			<li>Maecenas semper tincidunt nisi in tempus</li>
+			<li>Nulla scelerisque sem nec placerat congue. Nullam eu libero quis nisl cursus sagittis</li>
+		</ol>
+		
+		<h3>Subsection 2</h3>
+		<ul>
+			<li>Cras consectetur ac arcu eget lobortis. Etiam molestie posuere feugiat</li>
+			<li>Donec ultricies tellus vel velit dapibus rhoncus. Quisque aliquam luctus porta. Praesent venenatis sapien vel ligula commodo mattis</li>
+		</ul>
+		
+		<h2>Section 3</h2>
+		<ul>
+			<li>Fusce sed dui at libero <a href="#">facilisis consequat</a> eget eu lectus.</li>
+			<li>Duis pharetra blandit dolor ut pellentesque. Fusce a bibendum ante, sit amet varius magna.</li>
+			<li>Suspendisse et tellus finibus turpis scelerisque porta in nec est. Nunc mollis odio a nunc eleifend
+				<ul>
+					<li><strong>Donec rhoncus ac</strong> elit vitae accumsan. Sed et massa accumsan, congue magna vitae.</li>
+					<li><strong>Praesent pretium</strong> quam sit amet orci porttitor posuere. <em>(Quisque pellentesque diam vitae)</em> velit tincidunt, at condimentum diam ornare</li>
+				</ul>
+			</li>
+		</ul>
+		
+		<h2>Section 4</h2>
+		<p>Cras posuere eros a pretium malesuada. Morbi suscipit ac elit sed vehicula. Quisque id eleifend enim. Phasellus accumsan posuere blandit.</p>
+		
+		<h3>Subsection 1</h3>
+		<ol>
+			<li>Maecenas semper tincidunt nisi in tempus</li>
+			<li>Nulla scelerisque sem nec placerat congue. Nullam eu libero quis nisl cursus sagittis</li>
+		</ol>
+		
+		<h3>Subsection 2</h3>
+		<ul>
+			<li>Cras consectetur ac arcu eget lobortis. Etiam molestie posuere feugiat</li>
+			<li>Donec ultricies tellus vel velit dapibus rhoncus. Quisque aliquam luctus porta. Praesent venenatis sapien vel ligula commodo mattis</li>
+		</ul>
+		
+		<h2>Section 5</h2>
+		<ul>
+			<li>Fusce sed dui at libero <a href="#">facilisis consequat</a> eget eu lectus.</li>
+			<li>Duis pharetra blandit dolor ut pellentesque. Fusce a bibendum ante, sit amet varius magna.</li>
+			<li>Suspendisse et tellus finibus turpis scelerisque porta in nec est. Nunc mollis odio a nunc eleifend
+				<ul>
+					<li><strong>Donec rhoncus ac</strong> elit vitae accumsan. Sed et massa accumsan, congue magna vitae.</li>
+					<li><strong>Praesent pretium</strong> quam sit amet orci porttitor posuere. <em>(Quisque pellentesque diam vitae)</em> velit tincidunt, at condimentum diam ornare</li>
+				</ul>
+			</li>
+		</ul>
+		
+		<h2>Section 6</h2>
+		<p>Cras posuere eros a pretium malesuada. Morbi suscipit ac elit sed vehicula. Quisque id eleifend enim. Phasellus accumsan posuere blandit.</p>
+		
+		<h3>Subsection 1</h3>
+		<ol>
+			<li>Maecenas semper tincidunt nisi in tempus</li>
+			<li>Nulla scelerisque sem nec placerat congue. Nullam eu libero quis nisl cursus sagittis</li>
+		</ol>
+		
+		<h3>Subsection 2</h3>
+		<ul>
+			<li>Cras consectetur ac arcu eget lobortis. Etiam molestie posuere feugiat</li>
+			<li>Donec ultricies tellus vel velit dapibus rhoncus. Quisque aliquam luctus porta. Praesent venenatis sapien vel ligula commodo mattis</li>
+		</ul>
+	
+	
+	</div><!-- .content -->
+	<div class="sidebar">
+		<ul class="menu">
+			<li><a href="#section1">Section 1</a></li>
+			<li><a href="#section2">Section 2</a>
+				<ul>
+					<li><a href="#section3">Subsection 1</a></li>
+					<li><a href="#section4">Subsection 2</a></li>
+				</ul>
+			</li>
+			<li><a href="#section5">Section 3</a></li>
+			<li><a href="#section6">Section 4</a>
+				<ul>
+					<li><a href="#section7">Subsection 1</a></li>
+					<li><a href="#section8">Subsection 2</a></li>
+				</ul>
+			</li>
+			<li><a href="#section9">Section 5</a></li>
+			<li><a href="#section10">Section 6</a>
+				<ul>
+					<li><a href="#section11">Subsection 1</a></li>
+					<li><a href="#section12">Subsection 2</a></li>
+				</ul>
+			</li>
+		</ul>
+		<div id="back-to-top"><a href="#top">Back to top</a></div>
+	</div><!-- .sidebar -->
+</div><!-- .wrapper -->
+
+
+</body>
+</html>

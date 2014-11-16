@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>relativePosition - Boxes</title>
+	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+	<script src="relativePosition.js"></script>
+	<script>
+		$(document).ready(function(){
+			var Boxes = $('.box');
+			var Test  = $('#test');
+			
+			$(window).on( 'scroll resize', function(){
+				var testOffset = Test.fullOffset();
+				Boxes.each(function(){
+					var Box      = $(this);
+					var vertical = Box.relativePosition( testOffset ).vertical;
+					var box_class;
+					
+					Box.removeClass( 'above halfway-above inside halfway-below below' );
+					if( vertical == -2 )      box_class = 'above';
+					else if( vertical == -1 ) box_class = 'halfway-above';
+					else if( vertical == 1 )  box_class = 'halfway-below';
+					else if( vertical == 2 )  box_class = 'below';
+					else					 box_class = 'inside';
+					Box.addClass( box_class );
+				})
+			}).trigger( 'scroll' );
+			
+		});
+	</script>
+    <style>
+		body {
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			font-size: 14px;
+			line-height: 1.5;
+			color: #333;
+			background: #FFF;
+			margin: 0;
+		}
+		.wrapper {
+			width: 960px;
+			margin: 0 auto;
+		}
+		
+		#test {
+			position: fixed;
+			left:     0;
+			top:      200px;
+			height:   80px;
+			width:    100%;
+			background: #CCC;
+			opacity: .5;
+			z-index: 0;
+		}
+		
+		.box {
+			color: white;
+			width: 50px;
+			height: 50px;
+			margin: 0 0 50px 0;
+			line-height: 50px;
+			text-align: center;
+			background: #069;
+			transition: all .5s;
+			position: relative;
+			top: 0;
+			left: 0;
+			z-index: 1;
+			opacity: .75;
+		}
+		.box5 {
+			height: 80px;
+		}
+		.box6 {
+			height: 100px;
+		}
+		
+		.box.above {
+			background: #069;
+		}
+		.box.halfway-above {
+			background: #096;
+		}
+		.box.inside {
+			background: #366;
+		}
+		.box.halfway-below {
+			background: #636;
+		}
+		.box.below {
+			background: #903;
+		}
+	</style>
+</head>
+<body>
+
+<div class="wrapper">
+	<div id="test"></div>
+	<div class="box box1">1</div>
+	<div class="box box2">2</div>
+	<div class="box box3">3</div>
+	<div class="box box4">4</div>
+	<div class="box box5">5</div>
+	<div class="box box6">6</div>
+	<div class="box box7">7</div>
+	<div class="box box8">8</div>
+	<div class="box box9">9</div>
+	<div class="box box10">10</div>
+	<div class="box box1">1</div>
+	<div class="box box2">2</div>
+	<div class="box box3">3</div>
+	<div class="box box4">4</div>
+	<div class="box box5x">5</div>
+	<div class="box box6">6</div>
+	<div class="box box7">7</div>
+	<div class="box box8">8</div>
+	<div class="box box9">9</div>
+	<div class="box box10">10</div>
+</div><!-- .wrapper -->
+
+</body>
+</html>
