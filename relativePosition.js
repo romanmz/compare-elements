@@ -1,5 +1,5 @@
 /*!
- * relativePosition v1.0
+ * relativePosition v1.0.1
  * http://github.com/romanmz/relativePosition
  * By Roman Martinez - http://romanmz.com
  */
@@ -99,7 +99,26 @@
 				
 				$(this).offset( offset );
 			});
+		},
+		
+		
+		onscreen : function( callback ) {
+			if( typeof callback == 'function' ) {
+				var els = this;
+				
+				$(window).on( 'scroll resize', function(){
+					var windowOffset = $(window).fullOffset();
+					els.each(function(){
+						if( $(this).relativePosition( windowOffset ).vertical < 1 )
+							callback.call( this );
+					});
+				}).trigger( 'scroll' );
+				
+			}
+			return this;
 		}
+		
+		
 	});
 	
 	
