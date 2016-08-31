@@ -1,5 +1,5 @@
 /*!
- * relativePosition v1.0.1
+ * relativePosition v1.0.2
  * http://github.com/romanmz/relativePosition
  * By Roman Martinez - http://romanmz.com
  */
@@ -105,11 +105,15 @@
 		onscreen : function( callback ) {
 			if( typeof callback == 'function' ) {
 				var els = this;
+				var offset = 100;
 				
 				$(window).on( 'scroll resize', function(){
 					var windowOffset = $(window).fullOffset();
+					windowOffset.top -= offset;
+					windowOffset.middle -= offset;
+					windowOffset.bottom -= offset;
 					els.each(function(){
-						if( $(this).relativePosition( windowOffset ).vertical < 1 )
+						if( $(this).relativePosition( windowOffset ).vertical < 2 )
 							callback.call( this );
 					});
 				}).trigger( 'scroll' );
