@@ -4,23 +4,27 @@
 	<meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>relativePosition - Sections</title>
-	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-	<script src="relativePosition.js"></script>
+	<script src="relative-position.js"></script>
 	<script>
-		$(document).ready(function(){
-			var Boxes = $('.box');
-			var Logo  = $('#logo');
+		document.addEventListener('DOMContentLoaded', function(){
+			var Boxes = document.querySelectorAll('.box');
+			var Logo  = document.querySelector('#logo');
+			var logoOffset = new DOMAbsoluteRect( Logo );
 			
-			$(window).on( 'scroll resize', function(){
-				Boxes.each(function(){
-					var Box = $(this);
-					var position = Logo.relativePosition( Box ).vertical;
+			function onWindowScroll() {
+				for( var i = 0; i<Boxes.length; i++ ) {
+					var Box = Boxes[i];
+					logoOffset.updateData();
+					var position = logoOffset.relativeTo( Box ).vertical;
 					if( position <= 0 ) {
-						Logo.removeClass().addClass( Box.attr('id') );
-						return false;
+						Logo.className = Box.id;
+						break;
 					}
-				});
-			}).trigger( 'scroll' );
+				}
+			}
+			window.addEventListener( 'scroll', onWindowScroll );
+			window.addEventListener( 'resize', onWindowScroll );
+			onWindowScroll();
 		});
 	</script>
     <style>

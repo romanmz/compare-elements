@@ -4,19 +4,22 @@
 	<meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>relativePosition - Fixed Navigation</title>
-	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-	<script src="relativePosition.js"></script>
+	<script src="relative-position.js"></script>
 	<script>
-		$(document).ready(function(){
-			var Nav = $('#nav');
-			$(window).on( 'scroll resize', function(){
-				position = Nav.relativePosition();
+		document.addEventListener('DOMContentLoaded', function(){
+			var Nav = document.querySelector('#nav');
+			var navOffset = new DOMAbsoluteRect( Nav );
+			function onWindowScroll() {
+				position = navOffset.relativeTo( window );
 				if( position.vertical < 0 ) {
-					$('body').addClass( 'fixed-nav' );
+					document.body.classList.add( 'fixed-nav' );
 				} else {
-					$('body').removeClass( 'fixed-nav' );
+					document.body.classList.remove( 'fixed-nav' );
 				}
-			}).trigger( 'scroll' );
+			}
+			window.addEventListener( 'scroll', onWindowScroll );
+			window.addEventListener( 'resize', onWindowScroll );
+			onWindowScroll();
 		});
 	</script>
     <style>

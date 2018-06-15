@@ -4,40 +4,43 @@
 	<meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>relativePosition - Content</title>
-	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-	<script src="relativePosition.js"></script>
+	<script src="relative-position.js"></script>
 	<script>
-		$(document).ready(function(){
-			var Content = $('.content p, .content :header, .content li');
-			var Box = $('#testbox');
-			var BackToTop = $('#back-to-top');
+		document.addEventListener('DOMContentLoaded', function(){
+			var Content = document.querySelectorAll('.content p, .content h1, .content h2, .content h3, .content li');
+			var Box = document.querySelector('#testbox');
+			var BackToTop = document.querySelector('#back-to-top');
 			
-			$(window).on( 'scroll resize', function(){
-				//
-				var boxPosition = Box.fullOffset();
+			function onWindowScroll() {
 				
 				// Content
-				Content.each(function(){
-					var Element = $(this);
-					var position = Element.relativePosition( boxPosition );
+				for( var i = 0; i < Content.length; i++ ) {
+					var Element = Content[i];
+					var elementOffset = new DOMAbsoluteRect( Element );
+					var position = elementOffset.relativeTo( Box );
 					
-					Element.removeClass( 'above below' );
+					Element.classList.remove( 'above' );
+					Element.classList.remove( 'below' );
 					if( position.vertical < 0 ) {
-						Element.addClass( 'above' );
+						Element.classList.add( 'above' );
 					} else if( position.vertical > 0 ) {
-						Element.addClass( 'below' );
+						Element.classList.add( 'below' );
 					}
-				});
+				};
 				
 				// Back to top
-				var position = $('h1').relativePosition( boxPosition );
+				var h1Offset = new DOMAbsoluteRect( document.querySelector('h1') );
+				var position = h1Offset.relativeTo( Box );
 				if( position.vertical < 0 ) {
-					BackToTop.addClass( 'scrolled' );
+					BackToTop.classList.add( 'scrolled' );
 				} else {
-					BackToTop.removeClass( 'scrolled' );
+					BackToTop.classList.remove( 'scrolled' );
 				}
-				
-			}).trigger( 'scroll' );
+			}
+			
+			window.addEventListener( 'scroll', onWindowScroll );
+			window.addEventListener( 'resize', onWindowScroll );
+			onWindowScroll();
 			
 		});
 	</script>

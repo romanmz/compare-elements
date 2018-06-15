@@ -2,35 +2,42 @@
 <html>
 <head>
 	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<title>relativePosition - Boxes</title>
-	<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
-	<script src="relativePosition.js"></script>
+	<script src="relative-position.js"></script>
 	<script>
-		$(document).ready(function(){
-			var Boxes = $('.box');
-			var Test  = $('#test');
+		document.addEventListener('DOMContentLoaded', function(){
+			var Boxes = document.querySelectorAll('.box');
+			var Test  = document.querySelector('#test');
 			
-			$(window).on( 'scroll resize', function(){
-				var testOffset = Test.fullOffset();
-				Boxes.each(function(){
-					var Box      = $(this);
-					var vertical = Box.relativePosition( testOffset ).vertical;
+			function onWindowScroll() {
+				for( var i = 0; i < Boxes.length; i++ ) {
+					var Box = Boxes[i]
+					var BoxRect = new DOMAbsoluteRect( Box );
+					var vertical = BoxRect.relativeTo( Test ).vertical;
+					var boxClassList = Box.classList;
 					var box_class;
 					
-					Box.removeClass( 'above halfway-above inside halfway-below below' );
+					boxClassList.remove('above');
+					boxClassList.remove('halfway-above');
+					boxClassList.remove('inside');
+					boxClassList.remove('halfway-below');
+					boxClassList.remove('below');
 					if( vertical == -2 )      box_class = 'above';
 					else if( vertical == -1 ) box_class = 'halfway-above';
 					else if( vertical == 1 )  box_class = 'halfway-below';
 					else if( vertical == 2 )  box_class = 'below';
 					else					 box_class = 'inside';
-					Box.addClass( box_class );
-				})
-			}).trigger( 'scroll' );
+					boxClassList.add( box_class );
+				}
+			}
+			window.addEventListener( 'scroll', onWindowScroll );
+			window.addEventListener( 'resize', onWindowScroll );
+			onWindowScroll();
 			
 		});
 	</script>
-    <style>
+	<style>
 		body {
 			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 			font-size: 14px;
