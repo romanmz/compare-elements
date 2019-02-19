@@ -131,39 +131,129 @@
 	}
 	
 	
-	DOMAbsoluteRect.prototype.relativeTo = function( anotherElement, offsetY ) {
+	// ==================================================
+	// ELEMENTS COMPARISON
+	// ==================================================
+	class ElementsCompare {
 		
-		// Set reference offset
-		var another = new DOMAbsoluteRect( anotherElement );
-		var data = {};
 		
-		// apply offset
-		if( typeof offsetY === 'undefined' ) {
-			offsetY = 0;
+		// Constructor
+		// ------------------------------
+		constructor( element, reference ) {
+			this.element = ElementOffset.create( element );
+			this.reference = ElementOffset.create( reference );
 		}
 		
-		// Calculate data
-		data.top    = ( this.top    - offsetY - another.top ) / another.height;
-		data.bottom = ( this.bottom - offsetY - another.bottom ) / another.height;
-		data.left   = ( this.left   - another.left ) / another.width;
-		data.right  = ( this.right  - another.right ) / another.width;
 		
-		// Get data
-		if( data.bottom <= -1 )						data.vertical = -2;
-		else if( data.top >= 1 )					data.vertical = 2;
-		else if( data.top < 0 && data.bottom < 0 )	data.vertical = -1;
-		else if( data.top > 0 && data.bottom > 0 )	data.vertical = 1;
-		else										data.vertical = 0;
+		// Normalized position (float from 0 to 1)
+		// ------------------------------
+		normalizedPositionY( element=[0,1], reference=[0,1] ) {
+			let pointZero = this.reference.offsetY( reference[0] ) - ( this.element.height * element[0] );
+			let pointOne  = this.reference.offsetY( reference[1] ) - ( this.element.height * element[1] );
+			let range = pointOne - pointZero;
+			let currentPosition = this.element.top - pointZero;
+			return range ? currentPosition / range : 0;
+		}
+		normalizedPositionX( element=[0,1], reference=[0,1] ) {
+			let pointZero = this.reference.offsetX( reference[0] ) - ( this.element.width * element[0] );
+			let pointOne  = this.reference.offsetX( reference[1] ) - ( this.element.width * element[1] );
+			let range = pointOne - pointZero;
+			let currentPosition = this.element.top - pointZero;
+			return range ? currentPosition / range : 0;
+		}
 		
-		if( data.right <= -1 )						data.horizontal = -2;
-		else if( data.left >= 1 )					data.horizontal = 2;
-		else if( data.left < 0 && data.right < 0 )	data.horizontal = -1;
-		else if( data.left > 0 && data.right > 0 )	data.horizontal = 1;
-		else										data.horizontal = 0;
 		
-		// Return data
-		return data;
+		// Relative position (integer from -2 to +2)
+		// ------------------------------
+		get relativePositionY() {
+			if( this.element.bottom <= this.reference.top ) {
+				return -2;
+			} else if( this.element.bottom < this.reference.bottom && this.element.top < this.reference.top ) {
+				return -1;
+			} else if( this.element.top >= this.reference.bottom ) {
+				return +2;
+			} else if( this.element.top > this.reference.top && this.element.bottom > this.reference.bottom ) {
+				return +1;
+			} else {
+				return 0;
+			}
+		}
+		get relativePositionX() {
+			if( this.element.right <= this.reference.left ) {
+				return -2;
+			} else if( this.element.right < this.reference.right && this.element.left < this.reference.left ) {
+				return -1;
+			} else if( this.element.left >= this.reference.right ) {
+				return +2;
+			} else if( this.element.left > this.reference.top && this.element.right > this.reference.right ) {
+				return +1;
+			} else {
+				return 0;
+			}
+		}
+		
+		
+		// Relative position shortcuts
+		// ------------------------------
+		get isAbove() { return this.relativePositionY == -2 }
+		get isCrossingAbove() { return this.relativePositionY == -1 }
+		get isInsideY() { return this.relativePositionY == 0 }
+		get isCrossingBelow() { return this.relativePositionY == +1 }
+		get isBelow() { return this.relativePositionY == +2 }
+		
+		get isBefore() { return this.relativePositionX == -2 }
+		get isCrossingBefore() { return this.relativePositionX == -1 }
+		get isInsideX() { return this.relativePositionX == 0 }
+		get isCrossingAfter() { return this.relativePositionX == +1 }
+		get isAfter() { return this.relativePositionX == +2 }
+		
+		
+		// Relative size
+		// ------------------------------
+		get normalizedHeight() { return this.element.height / this.reference.height }
+		get isShorter() { return this.normalizedHeight < 1 }
+		get isTaller() { return this.normalizedHeight > 1 }
+		get isSameHeight() { return this.normalizedHeight == 1 }
+		
+		get normalizedWidth() { return this.element.width / this.reference.width }
+		get isNarrower() { return this.normalizedWidth < 1 }
+		get isWider() { return this.normalizedWidth > 1 }
+		get isSameWidth() { return this.normalizedWidth == 1 }
+		
+		
+		// Alignment
+		// ------------------------------
+		get isAlignedY() {
+			return this.element.top == this.reference.top ||
+				   this.element.top == this.reference.bottom ||
+				   this.element.bottom == this.reference.top ||
+				   this.element.bottom == this.reference.bottom;
+		}
+		get isAlignedX() {
+			return this.element.left == this.reference.left ||
+				   this.element.left == this.reference.right ||
+				   this.element.right == this.reference.left ||
+				   this.element.right == this.reference.right;
+		}
+		
+		
+		// Overlap
+		// ------------------------------
+		get isTouchingY() {
+			return this.element.bottom >= this.reference.top && this.element.top <= this.reference.bottom;
+		}
+		get isTouchingX() {
+			return this.element.right >= this.reference.left && this.element.left <= this.reference.right;
+		}
+		get isOverlappingY() {
+			return this.element.bottom > this.reference.top && this.element.top < this.reference.bottom;
+		}
+		get isOverlappingX() {
+			return this.element.right > this.reference.left && this.element.left < this.reference.right;
+		}
 	}
+	
+	
 	DOMAbsoluteRect.prototype.alignTo = function( axisH, axisV, anotherElement ) {
 		
 		// Set reference offset
@@ -224,6 +314,5 @@
 		return this;
 	}
 
-	
 	
 })();
