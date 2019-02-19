@@ -2,6 +2,21 @@
 	'use strict';
 	
 	
+	// Helper functions
+	// ------------------------------
+	function getElementsList( selector ) {
+		if( !selector ) {
+			return [];
+		} else if( typeof selector == 'string' ) {
+			return document.querySelectorAll( selector );
+		} else if( typeof selector.forEach != 'function' ) {
+			return [selector];
+		} else {
+			return selector;
+		}
+	}
+	
+	
 	// ==================================================
 	// ELEMENT OFFSET
 	// ==================================================
@@ -134,14 +149,38 @@
 	// ==================================================
 	// ELEMENTS COMPARISON
 	// ==================================================
-	class ElementsCompare {
+	class CompareElements {
 		
 		
-		// Constructor
+		// Constructors
 		// ------------------------------
 		constructor( element, reference ) {
 			this.element = ElementOffset.create( element );
 			this.reference = ElementOffset.create( reference );
+		}
+		static onScroll( elementSelector, referenceSelector, callback, autorun=true ) {
+			let elements = getElementsList( elementSelector );
+			let references = getElementsList( referenceSelector );
+			let compares = [];
+			references.forEach( (reference, i) => {
+				elements.forEach( (element, j) => {
+					if( typeof compares[i] == 'undefined' ) compares[i] = [];
+					compares[i][j] = new CompareElements( element, reference );
+				});
+			});
+			let onScrollCallback = function(){
+				references.forEach( (reference, i) => {
+					elements.forEach( (element, j) => {
+						callback( element, reference, compares[i][j] );
+					});
+				});
+			};
+			if( autorun ) {
+				window.addEventListener( 'scroll', onScrollCallback );
+				window.addEventListener( 'resize', onScrollCallback );
+				onScrollCallback();
+			}
+			return onScrollCallback;
 		}
 		
 		
@@ -251,68 +290,30 @@
 		get isOverlappingX() {
 			return this.element.right > this.reference.left && this.element.left < this.reference.right;
 		}
+		
+		
+		// Update alignment
+		// ------------------------------
+		alignX( elementRatio=0.5, referenceRatio=0.5 ) {
+			let left = this.reference.offsetX( referenceRatio ) - this.element.width * elementRatio;
+			this.element.left = left;
+		}
+		alignY( elementRatio=0.5, referenceRatio=0.5 ) {
+			let top = this.reference.offsetY( referenceRatio ) - this.element.height * elementRatio;
+			this.element.top = top;
+		}
+		align( elementRatio=0.5, referenceRatio=0.5 ) {
+			this.alignX( elementRatio, referenceRatio );
+			this.alignY( elementRatio, referenceRatio );
+		}
 	}
 	
 	
-	DOMAbsoluteRect.prototype.alignTo = function( axisH, axisV, anotherElement ) {
-		
-		// Set reference offset
-		var another = new DOMAbsoluteRect( anotherElement );
-		
-		// Loop objects
-		var offset = {};
-		
-		if( axisH == 'top' ) {
-			offset.top = another.top;
-		} else if( axisH == 'bottom' ) {
-			offset.top = another.bottom - this.height;
-		} else if( axisH == 'center' ) {
-			offset.top = another.getRelativeX( 0.5 ).y - ( this.height / 2 );
-		}
-		
-		if( axisV == 'left' ) {
-			offset.left = another.left;
-		} else if( axisV == 'right' ) {
-			offset.left = another.right - this.width;
-		} else if( axisV == 'center' ) {
-			offset.left = another.getRelativeX( 0.5 ).x - ( this.width / 2 );
-		}
-		
-		//
-		if( offset.top !== undefined ) {
-			this.setTop( offset.top );
-		}
-		if( offset.left !== undefined ) {
-			this.setLeft( offset.left );
-		}
-		
-		//
-		return this;
-	}
-	DOMAbsoluteRect.prototype.onscreen = function( offset ) {
-		if( isWindow( this.element ) ) {
-			return this;
-		}
-		if( typeof offset === 'undefined' ) {
-			offset = 0;
-		}
-		var _this = this;
-		function onWindowResize( e ) {
-			_this.updateData();
-			var relPos = _this.relativeTo( window, offset );
-			if( relPos.vertical < 2 ) {
-				_this.trigger( 'onscreen' );
-			} else {
-				_this.trigger( 'offscreen' );
-			}
-		}
-		window.addEventListener('scroll', onWindowResize);
-		window.addEventListener('resize', onWindowResize);
-		onWindowResize();
-		
-		//
-		return this;
-	}
-
+	// Expose classes
+	// ------------------------------
+	window['ElementOffset'] = ElementOffset;
+	window['WindowOffset'] = WindowOffset;
+	window['CompareElements'] = CompareElements;
+	
 	
 })();
