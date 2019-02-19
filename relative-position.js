@@ -96,6 +96,41 @@
 	}
 	
 	
+	// ==================================================
+	// WINDOW OFFSET
+	// ==================================================
+	class WindowOffset extends ElementOffset {
+		
+		
+		// Disable CSS helpers
+		// ------------------------------
+		css( property, value ) {}
+		setOffset( property, newValue ) {}
+		
+		
+		// Update offset getters
+		// ------------------------------
+		get top() {
+			return this.element.pageYOffset;
+		}
+		get bottom() {
+			return this.element.pageYOffset + this.element.innerHeight;
+		}
+		get left() {
+			return this.element.pageXOffset;
+		}
+		get right() {
+			return this.element.pageXOffset + this.element.innerWidth;
+		}
+		get height() {
+			return this.element.innerHeight;
+		}
+		get width() {
+			return this.element.innerWidth;
+		}
+	}
+	
+	
 	DOMAbsoluteRect.prototype.relativeTo = function( anotherElement, offsetY ) {
 		
 		// Set reference offset
