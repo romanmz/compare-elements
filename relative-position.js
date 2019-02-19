@@ -2,47 +2,100 @@
 	'use strict';
 	
 	
-	function isWindow( element ) {
-		return typeof element == 'object' && element.constructor.name == 'Window';
-	}
-	function DOMAbsoluteRect( element ) {
-		this.element = element;
-		this.updateData();
-	}
-	DOMAbsoluteRect.prototype.updateData = function() {
-		var element = this.element;
-		if( isWindow( element ) ) {
-			this.top    = element.pageYOffset;
-			this.left   = element.pageXOffset;
-			this.height = element.innerHeight;
-			this.width  = element.innerWidth;
-			this.bottom = this.top + this.height;
-			this.right  = this.left + this.width;
-		} else {
-			box = element.getBoundingClientRect();
-			this.top    = box.top + window.pageYOffset;
-			this.left   = box.left + window.pageXOffset;
-			this.height = box.height;
-			this.width  = box.width;
-			this.bottom = box.bottom + window.pageYOffset;
-			this.right  = box.right + window.pageXOffset;
+	// ==================================================
+	// ELEMENT OFFSET
+	// ==================================================
+	class ElementOffset {
+		
+		
+		// Constructors
+		// ------------------------------
+		static create( element ) {
+			return element.getBoundingClientRect ? new ElementOffset( element ) : new WindowOffset( element );
+		}
+		constructor( element ) {
+			this.element = element;
+		}
+		
+		
+		// CSS helpers
+		// ------------------------------
+		css( property, value ) {
+			if( arguments.length > 1 ) {
+				this.element.style[ property ] = value;
+			} else {
+				let styles = window.getComputedStyle( this.element );
+				return styles[ property ];
+			}
+		}
+		setOffset( property, newValue ) {
+			let difference = newValue - this[ property ];
+			if( this.css( 'position' ) == 'static' ) {
+				this.css( 'position', 'relative' );
+			} else {
+				difference += parseInt( this.css( property ) );
+			}
+			this.css( property, difference+'px' );
+		}
+		
+		
+		// Getting the current offset
+		// ------------------------------
+		get top() {
+			return this.element.getBoundingClientRect().top + window.pageYOffset;
+		}
+		get bottom() {
+			return this.element.getBoundingClientRect().bottom + window.pageYOffset;
+		}
+		get left() {
+			return this.element.getBoundingClientRect().left + window.pageXOffset;
+		}
+		get right() {
+			return this.element.getBoundingClientRect().right + window.pageXOffset;
+		}
+		get height() {
+			return this.element.getBoundingClientRect().height;
+		}
+		get width() {
+			return this.element.getBoundingClientRect().width;
+		}
+		get centerY() {
+			return this.offsetY( 0.5 );
+		}
+		get centerX() {
+			return this.offsetX( 0.5 );
+		}
+		offsetY( ratio=0 ) {
+			return this.top + (this.height * ratio);
+		}
+		offsetX( ratio=0 ) {
+			return this.left + (this.width * ratio);
+		}
+		
+		
+		// Setting a new offset
+		// ------------------------------
+		set top( newValue ) {
+			this.setOffset( 'top', newValue );
+		}
+		set bottom( newValue ) {
+			this.setOffset( 'top', newValue - this.height );
+		}
+		set left( newValue ) {
+			this.setOffset( 'left', newValue );
+		}
+		set right( newValue ) {
+			this.setOffset( 'left', newValue - this.width );
+		}
+		set centerY( newValue ) {
+			this.setOffset( 'top', newValue - (this.height * 0.5) );
+		}
+		set centerX( newValue ) {
+			this.setOffset( 'left', newValue - (this.width * 0.5) );
 		}
 	}
-	DOMAbsoluteRect.prototype.getRelativeX = function( ratio ) {
-		return {
-			x: this.left + (this.width * ratio),
-			y: this.top + (this.height * ratio),
-		};
-	}
-	DOMAbsoluteRect.prototype.on = function( eventName, callback ) {
-		this.element.addEventListener( eventName, callback );
-		return this;
-	}
-	DOMAbsoluteRect.prototype.trigger = function( eventName ) {
-		var event = new Event( eventName );
-		this.element.dispatchEvent( event );
-		return this;
-	}
+	
+	
 	DOMAbsoluteRect.prototype.relativeTo = function( anotherElement, offsetY ) {
 		
 		// Set reference offset
@@ -75,32 +128,6 @@
 		
 		// Return data
 		return data;
-	}
-	DOMAbsoluteRect.prototype.css = function( property, value ) {
-		if( arguments.length > 1 ) {
-			this.element.style[ property ] = value;
-		} else {
-			var styles = window.getComputedStyle( this.element );
-			return styles[ property ];
-		}
-	}
-	DOMAbsoluteRect.prototype.setTop = function( newValue ) {
-		var difference = newValue - this.top;
-		if( this.css('position') == 'static' ) {
-			this.css('position', 'relative');
-		} else {
-			difference += parseInt( this.css( 'top' ) );
-		}
-		this.css( 'top', difference+'px' );
-	}
-	DOMAbsoluteRect.prototype.setLeft = function( newValue ) {
-		var difference = newValue - this.left;
-		if( this.css('position') == 'static' ) {
-			this.css('position', 'relative');
-		} else {
-			difference += parseInt( this.css( 'left' ) );
-		}
-		this.css( 'left', difference+'px' );
 	}
 	DOMAbsoluteRect.prototype.alignTo = function( axisH, axisV, anotherElement ) {
 		
