@@ -1,5 +1,5 @@
-// (function(){
-// 	'use strict';
+(function(){
+	'use strict';
 	
 	
 	function isWindow( element ) {
@@ -162,4 +162,6 @@
 		return this;
 	}
 
-// })();
+	
+	
+})();
