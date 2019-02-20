@@ -3,38 +3,24 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>relativePosition - Boxes</title>
+	<title>Boxes</title>
 	<script src="relative-position.js"></script>
 	<script>
-		document.addEventListener('DOMContentLoaded', function(){
-			var Boxes = document.querySelectorAll('.box');
-			var Test  = document.querySelector('#test');
-			
-			function onWindowScroll() {
-				for( var i = 0; i < Boxes.length; i++ ) {
-					var Box = Boxes[i]
-					var BoxRect = new DOMAbsoluteRect( Box );
-					var vertical = BoxRect.relativeTo( Test ).vertical;
-					var boxClassList = Box.classList;
-					var box_class;
-					
-					boxClassList.remove('above');
-					boxClassList.remove('halfway-above');
-					boxClassList.remove('inside');
-					boxClassList.remove('halfway-below');
-					boxClassList.remove('below');
-					if( vertical == -2 )      box_class = 'above';
-					else if( vertical == -1 ) box_class = 'halfway-above';
-					else if( vertical == 1 )  box_class = 'halfway-below';
-					else if( vertical == 2 )  box_class = 'below';
-					else					 box_class = 'inside';
-					boxClassList.add( box_class );
+		document.addEventListener('DOMContentLoaded', ()=>{
+			CompareElements.onScroll( '.box', '#test', (element, reference, compare) => {
+				element.classList.remove( 'above', 'halfway-above', 'inside', 'halfway-below', 'below' );
+				if( compare.isAbove ) {
+					element.classList.add( 'above' );
+				} else if( compare.isCrossingAbove ) {
+					element.classList.add( 'halfway-above' );
+				} else if( compare.isInsideY ) {
+					element.classList.add( 'inside' );
+				} else if( compare.isCrossingBelow ) {
+					element.classList.add( 'halfway-below' );
+				} else if( compare.isBelow ) {
+					element.classList.add( 'below' );
 				}
-			}
-			window.addEventListener( 'scroll', onWindowScroll );
-			window.addEventListener( 'resize', onWindowScroll );
-			onWindowScroll();
-			
+			});
 		});
 	</script>
 	<style>
@@ -50,18 +36,16 @@
 			width: 960px;
 			margin: 0 auto;
 		}
-		
 		#test {
-			position: fixed;
-			left:     0;
-			top:      200px;
-			height:   80px;
-			width:    100%;
+			position:   fixed;
+			left:       0;
+			top:        200px;
+			height:     80px;
+			width:      100%;
 			background: #CCC;
-			opacity: .5;
-			z-index: 0;
+			opacity:    .5;
+			z-index:    0;
 		}
-		
 		.box {
 			color: white;
 			width: 50px;
@@ -70,7 +54,7 @@
 			line-height: 50px;
 			text-align: center;
 			background: #069;
-			transition: all .5s;
+			transition: background .5s;
 			position: relative;
 			top: 0;
 			left: 0;
@@ -84,21 +68,11 @@
 			height: 100px;
 		}
 		
-		.box.above {
-			background: #069;
-		}
-		.box.halfway-above {
-			background: #096;
-		}
-		.box.inside {
-			background: #366;
-		}
-		.box.halfway-below {
-			background: #636;
-		}
-		.box.below {
-			background: #903;
-		}
+		.box.above { background: #069 }
+		.box.halfway-above { background: #096 }
+		.box.inside { background: #366 }
+		.box.halfway-below { background: #636 }
+		.box.below { background: #903 }
 	</style>
 </head>
 <body>
@@ -119,7 +93,7 @@
 	<div class="box box2">2</div>
 	<div class="box box3">3</div>
 	<div class="box box4">4</div>
-	<div class="box box5x">5</div>
+	<div class="box box5">5</div>
 	<div class="box box6">6</div>
 	<div class="box box7">7</div>
 	<div class="box box8">8</div>

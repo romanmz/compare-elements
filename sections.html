@@ -2,51 +2,37 @@
 <html>
 <head>
 	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>relativePosition - Sections</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Sections</title>
 	<script src="relative-position.js"></script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function(){
-			var Boxes = document.querySelectorAll('.box');
-			var Logo  = document.querySelector('#logo');
-			var logoOffset = new DOMAbsoluteRect( Logo );
-			
-			function onWindowScroll() {
-				for( var i = 0; i<Boxes.length; i++ ) {
-					var Box = Boxes[i];
-					logoOffset.updateData();
-					var position = logoOffset.relativeTo( Box ).vertical;
-					if( position <= 0 ) {
-						Logo.className = Box.id;
-						break;
-					}
+			CompareElements.onScroll( '#logo', '.box', function( element, reference, compare ){
+				if( compare.isCrossingAbove || compare.isInsideY ) {
+					element.className = reference.id;
 				}
-			}
-			window.addEventListener( 'scroll', onWindowScroll );
-			window.addEventListener( 'resize', onWindowScroll );
-			onWindowScroll();
+			});
 		});
 	</script>
-    <style>
+	<style>
 		body {
 			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 			font-size: 14px;
 			line-height: 1.5;
 			color: #333;
 			background: #FFF;
-			margin:  0;
+			margin: 0;
 		}
 		.wrapper {
 			overflow: hidden;
 			width: 960px;
 			margin: 0 auto;
 		}
-		
 		.box {
-			width:       100%;
-			height:      300px;
+			width: 100%;
+			height: 300px;
 			line-height: 300px;
-			color:      white;
+			color: white;
 			text-align: center;
 			transition: all .5s;
 		}
@@ -55,7 +41,6 @@
 		#box3, #box8 { background: #636; }
 		#box4, #box9 { background: #903; }
 		#box5, #box10 { background: #F90; }
-		
 		#logo {
 			position: fixed;
 			right:    30px;
@@ -63,8 +48,8 @@
 			height:   50px;
 			width:    50px;
 			background: #CCC;
-			opacity: .85;
-			z-index: 1;
+			opacity:  .85;
+			z-index:   1;
 			border-radius: 20px;
 			transition: all .5s;
 		}
@@ -85,7 +70,7 @@
 </head>
 <body>
 
-<div id="logo"></div>
+<div id="logo" class="logo"></div>
 <div class="box" id="box1">1</div>
 <div class="box" id="box2">2</div>
 <div class="box" id="box3">3</div>

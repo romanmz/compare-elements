@@ -2,64 +2,47 @@
 <html>
 <head>
 	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>relativePosition - Parallax</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Parallax</title>
 	<script src="relative-position.js"></script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function(){
-			
-			var Boxes = document.querySelectorAll('.box');
-			var Box1 = document.querySelector('#box1');
-			var Box2 = document.querySelector('#box2');
-			var Box3 = document.querySelector('#box3');
-			
-			var Sphere11 = Box1.querySelector('.sphere1');
-			var Sphere12 = Box1.querySelector('.sphere2');
-			var Sphere13 = Box1.querySelector('.sphere3');
-			
-			var Sphere21 = Box2.querySelector('.sphere1');
-			var Sphere22 = Box2.querySelector('.sphere2');
-			var Sphere23 = Box2.querySelector('.sphere3');
-			
-			var Sphere31 = Box3.querySelector('.sphere1');
-			var Sphere32 = Box3.querySelector('.sphere2');
-			var Sphere33 = Box3.querySelector('.sphere3');
-			
-			function onWindowScroll() {
-				
-				var windowOffset = new DOMAbsoluteRect( window );
-				
-				for( var i=0; i<Boxes.length; i++) {
-					Boxes[i].style.height = windowOffset.height+'px';
-				}
-				
-				var position1 = new DOMAbsoluteRect( Box1 ).relativeTo( window );
-				var position2 = new DOMAbsoluteRect( Box2 ).relativeTo( window );
-				var position3 = new DOMAbsoluteRect( Box3 ).relativeTo( window );
-				
-				Sphere11.style.top = position1.top * 50 + 50 + '%';
-				Sphere21.style.top = position2.top * 25 + 50 + '%';
-				Sphere31.style.top = position3.top * 10 + 50 + '%';
-				
-				Sphere12.style.bottom = position1.top * 50 + 50 + '%';
-				Sphere12.style.transform = 'scale('+(position1.top*-1+1)+')';
-				Sphere22.style.bottom = position2.top * 50 + 50 + '%';
-				Sphere22.style.transform = 'scale('+(position2.top+1)+')';
-				Sphere32.style.bottom = position3.top * 50 + 50 + '%';
-				Sphere32.style.transform = 'scale('+(position3.top*-1+1)+')';
-				
-				Sphere13.style.left = position1.top * -50 + 50 + '%';
-				Sphere23.style.left = position2.top * -50 + 50 + '%';
-				Sphere33.style.left = position3.top * -50 + 50 + '%';
-			}
-			
-			window.addEventListener( 'scroll', onWindowScroll );
-			window.addEventListener( 'resize', onWindowScroll );
-			onWindowScroll();
-			
+			const Box1 = document.querySelector('#box1');
+			const Sphere1 = Box1.querySelector('.sphere1');
+			const Sphere2 = Box1.querySelector('.sphere2');
+			const Sphere3 = Box1.querySelector('.sphere3');
+			const Box2 = document.querySelector('#box2');
+			const Sphere4 = Box2.querySelector('.sphere1');
+			const Sphere5 = Box2.querySelector('.sphere2');
+			const Sphere6 = Box2.querySelector('.sphere3');
+			const Box3 = document.querySelector('#box3');
+			const Sphere7 = Box3.querySelector('.sphere1');
+			const Sphere8 = Box3.querySelector('.sphere2');
+			const Sphere9 = Box3.querySelector('.sphere3');
+			CompareElements.onScroll( Box1, window, function( element, reference, compare ){
+				let position = compare.normalizedPositionY( [0, 0], [0, 1] );
+				Sphere1.style.top = position * 50 + 50 + '%';
+				Sphere2.style.bottom = position * 50 + 50 + '%';
+				Sphere2.style.transform = 'scale('+(position*-1+1)+')';
+				Sphere3.style.left = position * -50 + 50 + '%';
+			});
+			CompareElements.onScroll( Box2, window, function( element, reference, compare ){
+				let position = compare.normalizedPositionY( [0, 0], [0, 1] );
+				Sphere4.style.top = position * 25 + 50 + '%';
+				Sphere5.style.bottom = position * 50 + 50 + '%';
+				Sphere5.style.transform = 'scale('+(position+1)+')';
+				Sphere6.style.left = position * -50 + 50 + '%';
+			});
+			CompareElements.onScroll( Box3, window, function( element, reference, compare ){
+				let position = compare.normalizedPositionY( [0, 0], [0, 1] );
+				Sphere7.style.top = position * 10 + 50 + '%';
+				Sphere8.style.bottom = position * 50 + 50 + '%';
+				Sphere8.style.transform = 'scale('+(position*-1+1)+')';
+				Sphere9.style.left = position * -50 + 50 + '%';
+			});
 		});
 	</script>
-    <style>
+	<style>
 		body {
 			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 			font-size: 14px;
@@ -73,12 +56,11 @@
 			width: 960px;
 			margin: 0 auto;
 		}
-		
 		.box {
-			width:       100%;
-			height:      800px;
+			width: 100%;
+			height:  100vh;
 			line-height: 800px;
-			color:      white;
+			color: white;
 			text-align: center;
 			position: relative;
 			overflow: hidden;
@@ -86,7 +68,6 @@
 		#box1 { background: #096; }
 		#box2 { background: #900; }
 		#box3 { background: #F90; }
-		
 		.sphere {
 			position: absolute;
 			width: 50px;
@@ -96,20 +77,9 @@
 			color: #333;
 			background: white;
 		}
-		#sphere21 {
-			background: red;
-			z-index: 2;
-		}
-		
-		.sphere1 {
-			left: 30%;
-		}
-		.sphere2 {
-			left: 50%;
-		}
-		.sphere3 {
-			left: 70%;
-		}
+		.sphere1 { left: 30% }
+		.sphere2 { left: 50% }
+		.sphere3 { left: 70% }
 	</style>
 </head>
 <body>

@@ -2,49 +2,33 @@
 <html>
 <head>
 	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>relativePosition - Content</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Toggle Content Elements</title>
 	<script src="relative-position.js"></script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function(){
-			var Content = document.querySelectorAll('.content p, .content h1, .content h2, .content h3, .content li');
-			var Box = document.querySelector('#testbox');
-			var BackToTop = document.querySelector('#back-to-top');
-			
-			function onWindowScroll() {
-				
-				// Content
-				for( var i = 0; i < Content.length; i++ ) {
-					var Element = Content[i];
-					var elementOffset = new DOMAbsoluteRect( Element );
-					var position = elementOffset.relativeTo( Box );
-					
-					Element.classList.remove( 'above' );
-					Element.classList.remove( 'below' );
-					if( position.vertical < 0 ) {
-						Element.classList.add( 'above' );
-					} else if( position.vertical > 0 ) {
-						Element.classList.add( 'below' );
-					}
-				};
-				
-				// Back to top
-				var h1Offset = new DOMAbsoluteRect( document.querySelector('h1') );
-				var position = h1Offset.relativeTo( Box );
-				if( position.vertical < 0 ) {
-					BackToTop.classList.add( 'scrolled' );
-				} else {
-					BackToTop.classList.remove( 'scrolled' );
+			const elements = document.querySelectorAll('.content p, .content h1, .content h2, .content h3, .content li');
+			const visibleBox = document.querySelector('#testbox');
+			const backToTop = document.querySelector('#back-to-top');
+			const h1 = document.querySelector('h1');
+			CompareElements.onScroll( elements, visibleBox, function( element, reference, compare ){
+				element.classList.remove( 'above', 'below' );
+				if( compare.relativePositionY < 0 ) {
+					element.classList.add( 'above' );
+				} else if( compare.relativePositionY > 0 ) {
+					element.classList.add( 'below' );
 				}
-			}
-			
-			window.addEventListener( 'scroll', onWindowScroll );
-			window.addEventListener( 'resize', onWindowScroll );
-			onWindowScroll();
-			
+			});
+			CompareElements.onScroll( h1, visibleBox, function( element, reference, compare ){
+				if( compare.relativePositionY < 0 ) {
+					backToTop.classList.add( 'scrolled' );
+				} else {
+					backToTop.classList.remove( 'scrolled' );
+				}
+			});
 		});
 	</script>
-    <style>
+	<style>
 		/* Layout */
 		body {
 			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;

@@ -2,27 +2,22 @@
 <html>
 <head>
 	<meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>relativePosition - Fixed Navigation</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Fixed Navigation</title>
 	<script src="relative-position.js"></script>
 	<script>
 		document.addEventListener('DOMContentLoaded', function(){
-			var Nav = document.querySelector('#nav');
-			var navOffset = new DOMAbsoluteRect( Nav );
-			function onWindowScroll() {
-				position = navOffset.relativeTo( window );
-				if( position.vertical < 0 ) {
-					document.body.classList.add( 'fixed-nav' );
+			const bodyClass = document.body.classList;
+			CompareElements.onScroll( '#nav', window, (element, reference, compare) => {
+				if( compare.relativePositionY < 0 ) {
+					bodyClass.add( 'fixed-nav' );
 				} else {
-					document.body.classList.remove( 'fixed-nav' );
+					bodyClass.remove( 'fixed-nav' );
 				}
-			}
-			window.addEventListener( 'scroll', onWindowScroll );
-			window.addEventListener( 'resize', onWindowScroll );
-			onWindowScroll();
+			});
 		});
 	</script>
-    <style>
+	<style>
 		body {
 			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 			font-size: 14px;
@@ -37,7 +32,6 @@
 			width: 960px;
 			margin: 0 auto;
 		}
-		
 		nav {
 			background: #EEE;
 			height: 40px;
